@@ -1,0 +1,168 @@
+1.creating table
+---------------
+token@cqlsh> use test ;
+token@cqlsh:test> CREATE TABLE student(roll_num int,name text,dept text,primary KEY (roll_num));
+
+2.describe table
+---------------
+
+token@cqlsh:test> desc student ;
+
+CREATE TABLE test.student (
+    roll_num int PRIMARY KEY,
+    dept text,
+    name text
+) WITH additional_write_policy = '99PERCENTILE'
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND nodesync = {'enabled': 'true', 'incremental': 'true'}
+    AND read_repair = 'BLOCKING'
+    AND speculative_retry = '99PERCENTILE';
+
+token@cqlsh:test> 
+
+3.inserting/upserting data into tables
+
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 100,'Ram','MPC');
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 101,'sam','CEC');
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 102,'kamal','CSE');
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 103,'sandy','ECE');
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 104,'Chethan','EEE');
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 105,'Jack','ME');
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 106,'Santhu','EEE');
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 106,'Kunal','MPC');
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 106,'Ramya','ECE'); -->already existing primary key upserting 
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 107,'kunal','MPC');
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 108,'Niru','ME');
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 109,'Surya','MSC');
+token@cqlsh:test> INSERT INTO student(roll_num , name , dept ) VALUES ( 110,'Rakesh','MSC');
+token@cqlsh:test> 
+
+
+4.Reading data in table
+
+token@cqlsh:test> SELECT * FROM student ;
+
+ roll_num | dept | name
+----------+------+---------
+      110 |  MSC |  Rakesh
+      105 |   ME |    Jack
+      107 |  MPC |   kunal
+      100 |  MPC |     Ram
+      108 |   ME |    Niru
+      109 |  MSC |   Surya
+      104 |  EEE | Chethan
+      102 |  CSE |   kamal
+      106 |  ECE |   Ramya
+      101 |  CEC |     sam
+      103 |  ECE |   sandy
+
+(11 rows)
+token@cqlsh:test> 
+
+
+
+5.update
+-------------
+
+token@cqlsh:test> UPDATE student set name = 'Nirmala' where roll_num =108;
+
+token@cqlsh:test> select * from student where roll_num = 108
+        ... ;
+
+ roll_num | dept | name
+----------+------+---------
+      108 |   ME | Nirmala
+
+(1 rows)
+token@cqlsh:test> 
+
+token@cqlsh:test> UPDATE student set dept  = 'EEE' where roll_num =102;
+token@cqlsh:test> select * from student WHERE roll_num =102;
+
+ roll_num | dept | name
+----------+------+-------
+      102 |  EEE | kamal
+
+(1 rows)
+token@cqlsh:test> 
+
+After update
+------------
+
+token@cqlsh:test> select * from student ;
+
+ roll_num | dept | name
+----------+------+---------
+      110 |  MSC |  Rakesh
+      105 |   ME |    Jack
+      107 |  MPC |   kunal
+      100 |  MPC |     Ram
+      108 |   ME | Nirmala
+      109 |  MSC |   Surya
+      104 |  EEE | Chethan
+      102 |  EEE |   kamal
+      106 |  ECE |   Ramya
+      101 |  CEC |     sam
+      103 |  ECE |   sandy
+
+(11 rows)
+
+6.delete operation
+--------------------------------------------------------------
+
+token@cqlsh:test> DELETE name from student where roll_num =105;
+token@cqlsh:test> select * from student WHERE roll_num =105;
+
+ roll_num | dept | name
+----------+------+------
+      105 |   ME | null
+
+(1 rows)
+token@cqlsh:test> 
+token@cqlsh:test> DELETE dept from student where roll_num =101;
+token@cqlsh:test> select * from student WHERE roll_num =101;
+
+ roll_num | dept | name
+----------+------+------
+      101 | null |  sam
+
+(1 rows)
+token@cqlsh:test>
+
+after deletion operation
+-------------------------------------------------------
+
+token@cqlsh:test> select * from student ;
+
+ roll_num | dept | name
+----------+------+---------
+      110 |  MSC |  Rakesh
+      105 |   ME |    null
+      107 |  MPC |   kunal
+      100 |  MPC |     Ram
+      108 |   ME | Nirmala
+      109 |  MSC |   Surya
+      104 |  EEE | Chethan
+      102 |  EEE |   kamal
+      106 |  ECE |   Ramya
+      101 | null |     sam
+      103 |  ECE |   sandy
+
+(11 rows)
+token@cqlsh:test> 
+token@cqlsh:test> 
+
+
+
+
+
